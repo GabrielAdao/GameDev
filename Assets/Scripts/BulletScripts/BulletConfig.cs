@@ -5,15 +5,15 @@ using UnityEngine;
 public class BulletConfig : MonoBehaviour
 {
     [SerializeField] GameObject Bullet;
-    [SerializeField] float projectileSpeed = 10f;
-
+    [SerializeField] float projectileSpeed = 20f;
+    [SerializeField ]Transform player;
+    [SerializeField ]Transform target;
     public Vector2 speed;
-    void Start()
-    {
-        
-    }
+    public float fireRate = 3000f;
 
-    // Update is called once per frame
+    private float shootingTime;
+
+
     void Update()
     {
         Fire();
@@ -21,11 +21,16 @@ public class BulletConfig : MonoBehaviour
 
     void Fire()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Time.time > shootingTime)
         {
-            GameObject shoot = Instantiate(Bullet, transform.position, Quaternion.identity) as GameObject;
-            shoot.GetComponent<Rigidbody2D>().velocity = new Vector2(0, projectileSpeed);
-            
+            shootingTime = Time.time + fireRate / 1000;
+            Vector2 myPos = new Vector2(player.position.x, player.position.y);
+            GameObject projectile = Instantiate(Bullet, myPos, Quaternion.identity);
+            Vector2 enemyDirection = myPos + (Vector2)target.position;
+            projectile.GetComponent<Rigidbody2D>().velocity = enemyDirection * projectileSpeed;
+
+            //Collision2D collision = shoot.GetComponent<Collision2D>();
+            //OnCollisionEnter2D(collision);
         }
     }
 }
